@@ -197,12 +197,24 @@ sub-directories: The pattern ``foo/**/bar`` matches:
 
 By specifying the option ``--one-file-system`` you can instruct restic
 to only backup files from the file systems the initially specified files
-or directories reside on. For example, calling restic like this won't
-backup ``/sys`` or ``/dev`` on a Linux system:
+or directories reside on.
+
+For example, if there were two filesystems, ``/`` and ``/srv/data``, and
+restic were run as follows, it would not descend into ``/srv/data``,
+because it's on a different filesystem than ``/``:
 
 .. code-block:: console
 
-    $ restic -r /srv/restic-repo backup --one-file-system /
+    $ restic backup --one-file-system /
+
+In contrast, with the same two filesystems, if restic were run as follows,
+it would backup everything in the ``/`` filesystem, but in the
+``/srv/data`` filesystem, it would only backup the contents of
+``/srv/data/webserver``, and nothing else in ``/srv/data``:
+
+.. code-block:: console
+
+    $ restic backup --one-file-system / /srv/data/webserver
 
 By using the ``--files-from`` option you can read the files you want to
 backup from a file. This is especially useful if a lot of files have to
